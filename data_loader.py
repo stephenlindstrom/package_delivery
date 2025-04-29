@@ -15,8 +15,10 @@ def load_package_data(filename):
       zip_code = package[3]
       deadline = package[4]
       weight = package[5]
+      truck_requirement = int(package[6]) if package[6] else None
+      group_id = int(package[7]) if package[7] else None
 
-      pack = Package(obj_id, address, deadline, city, zip_code, weight, "hub")
+      pack = Package(obj_id, address, deadline, city, zip_code, weight, "hub", truck_requirement, group_id)
       package_hash_table.insert(pack)
   return package_hash_table
 

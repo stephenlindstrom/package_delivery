@@ -19,10 +19,10 @@ def main():
   # print(distance)
   # print(package_hash_table)
 
-  truck1 = Truck("08:00")
-  load_truck(truck1, package_hash_table, distance_matrix, address_list)
-  print(package_hash_table)
-  deliver_packages(truck1, distance_matrix, address_list)
+  # truck1 = Truck("08:00")
+  # load_truck(truck1, package_hash_table, distance_matrix, address_list)
+  # print(package_hash_table)
+  # deliver_packages(truck1, distance_matrix, address_list)
   print(package_hash_table)
 
 def distance_between_addresses(address1, address2, distance_matrix, address_list):
