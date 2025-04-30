@@ -33,9 +33,7 @@ def main():
   load_truck(truck3, package_hash_table, distance_matrix, address_list)
   deliver_packages(truck3, distance_matrix, address_list)
   print(package_hash_table)
-  print(truck1.distance_traveled)
-  print(truck2.distance_traveled)
-  print(truck3.distance_traveled)
+  print(truck1.distance_traveled + truck2.distance_traveled + truck3.distance_traveled)
   packages = [bucket_list[0] for bucket_list in package_hash_table.table]
   print(delivered_on_time(packages))
 
@@ -58,7 +56,7 @@ def find_nearest_package(current_address, packages, distance_matrix, address_lis
   return [nearest_package, min_distance]
 
 def load_truck(truck, package_hash_table, distance_matrix, address_list):
-  packages = [
+  all_packages = [
     bucket_list[0] 
     for bucket_list in package_hash_table.table 
     if ( 
@@ -68,23 +66,41 @@ def load_truck(truck, package_hash_table, distance_matrix, address_list):
         and (bucket_list[0].ready_time is None or bucket_list[0].ready_time <= truck.departure_time)
         )
   ]
+
+  deadline_packages = sorted([package for package in all_packages if package.deadline], key=lambda package: package.deadline)
+  eod_packages = [package for package in all_packages if package.deadline is None]
+
   current_address = "4001 South 700 East"
-  while len(truck.packages) < truck.capacity and packages:
-    nearest_package, _ = find_nearest_package(current_address, packages, distance_matrix, address_list)
+
+  while len(truck.packages) < truck.capacity and (deadline_packages or eod_packages):
+    if deadline_packages:
+      nearest_package, _ = find_nearest_package(current_address, deadline_packages, distance_matrix, address_list)
+    else:
+      nearest_package, _ = find_nearest_package(current_address, eod_packages, distance_matrix, address_list)
+
     if nearest_package.group_id:
-      package_group = [package for package in packages if package.group_id == nearest_package.group_id]
+      package_group = [package for package in deadline_packages + eod_packages if package.group_id == nearest_package.group_id]
       if len(package_group) + len(truck.packages) <= truck.capacity:
         for package in package_group:
           truck.packages.append(package)
           package.delivery_status = "in route"
-          packages.remove(package)
+          if package in deadline_packages:
+            deadline_packages.remove(package)
+          else:
+            eod_packages.remove(package)
         current_address = nearest_package.address
       else:
-        packages.remove(nearest_package)
+        if nearest_package in deadline_packages:
+          deadline_packages.remove(nearest_package)
+        else:
+          eod_packages.remove(nearest_package)
     else:
       truck.packages.append(nearest_package)
       nearest_package.delivery_status = "in route"
-      packages.remove(nearest_package)
+      if nearest_package in deadline_packages:
+        deadline_packages.remove(nearest_package)
+      else:
+        eod_packages.remove(nearest_package)
       current_address = nearest_package.address
 
 def deliver_packages(truck, distance_matrix, address_list):
