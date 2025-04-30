@@ -13,12 +13,16 @@ def load_package_data(filename):
       address = package[1]
       city = package[2]
       zip_code = package[3]
-      deadline = package[4]
+      if package[4] == "EOD":
+        deadline = None
+      else:
+        deadline = package[4]
       weight = package[5]
       truck_requirement = int(package[6]) if package[6] else None
       group_id = int(package[7]) if package[7] else None
+      ready_time = package[8] if package[8] else None
 
-      pack = Package(obj_id, address, deadline, city, zip_code, weight, "hub", truck_requirement, group_id)
+      pack = Package(obj_id, address, deadline, city, zip_code, weight, "hub", truck_requirement, group_id, ready_time)
       package_hash_table.insert(pack)
   return package_hash_table
 
