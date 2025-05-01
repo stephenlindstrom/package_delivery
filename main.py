@@ -25,19 +25,21 @@ def main():
   load_truck(truck2, package_hash_table, distance_matrix, address_list)
   deliver_packages(truck1, distance_matrix, address_list)
   deliver_packages(truck2, distance_matrix, address_list)
-  print(truck1.return_time)
-  print(truck2.return_time)
+  # print(truck1.return_time)
+  # print(truck2.return_time)
   package9_ready_time = datetime.strptime("10:20", "%H:%M")
   driver_ready_time = min(truck1.return_time, truck2.return_time)
   truck3_departure_time = max(driver_ready_time, package9_ready_time).strftime("%H:%M")
-  print(truck3_departure_time)
+  # print(truck3_departure_time)
   truck3 = Truck(3, truck3_departure_time)
+  trucks = [truck1, truck2, truck3]
   load_truck(truck3, package_hash_table, distance_matrix, address_list)
   deliver_packages(truck3, distance_matrix, address_list)
-  print(package_hash_table)
-  print(truck1.distance_traveled + truck2.distance_traveled + truck3.distance_traveled)
-  packages = [bucket_list[0] for bucket_list in package_hash_table.table]
-  print(delivered_on_time(packages))
+  user_interface(package_hash_table, trucks)
+  # print(package_hash_table)
+  # print(truck1.distance_traveled + truck2.distance_traveled + truck3.distance_traveled)
+  # packages = [bucket_list[0] for bucket_list in package_hash_table.table]
+  # print(delivered_on_time(packages))
 
 def distance_between_addresses(address1, address2, distance_matrix, address_list):
   try:
@@ -150,6 +152,118 @@ def delivered_on_time(packages):
     if package.deadline is not None and package.delivery_time > package.deadline:
       return False
   return True
+
+def user_interface(package_hash_table, trucks):
+  while True:
+    print("Western Governors University Parcel Service")
+    print("1. View Status of All Packages")
+    print("2. View Status of a Package")
+    print("3. View Truck Mileage")
+    print("4. Exit")
+
+    choice = input("Enter your choice (1-4): ")
+
+    if choice == "1":
+      view_all_packages(package_hash_table, trucks)
+    elif choice == "2":
+      view_package(package_hash_table, trucks)
+    elif choice == "3":
+      view_truck_mileage(trucks)
+    elif choice == "4":
+      break
+    else:
+      print("Invalid input. Please enter 1-4")
+
+def view_all_packages(package_hash_table, trucks):
+  while(True):
+    print("View Status of All Packages at Given Time")
+    user_input = input("Enter a time using 24-hour format (ie 13:52) or 'q' to return to home page: ")
+    if user_input.lower() == 'q':
+      break
+    try:
+      time = datetime.strptime(user_input, "%H:%M")
+    except ValueError:
+      print("Wrong time format")
+      continue
+    packages = sorted(
+      [
+        package
+        for bucket in package_hash_table.table if bucket
+        for package in bucket
+      ],
+      key=lambda package: package.obj_id
+    )
+
+    print(f"{'Package':<10}{'Status':<25}{'Truck':<10}")
+    for package in packages:
+      assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
+      if time < package.delivery_time:
+        if assigned_truck is None or time < assigned_truck.departure_time:
+              package_status = "At the hub"
+              truck_status = "None"
+        else: 
+          package_status = "In route"
+          truck_status = assigned_truck.truck_id
+      else:
+        delivery_time = package.delivery_time.strftime("%H:%M")
+        package_status = f"Delivered at {delivery_time}"
+        truck_status = assigned_truck.truck_id
+
+      print(f"{package.obj_id:<10}{package_status:<25}{str(truck_status):<10}")
+
+
+def view_package(package_hash_table, trucks):
+  while(True):
+    print("View Status of a Package at Given Time")
+    package_input = input("Enter a package number (1-40) or 'q' to return to home page: ")
+    if package_input.lower() == 'q':
+      break
+    try:
+      package_number = int(package_input)
+    except ValueError:
+      print("Invalid input. Not an integer.")
+      continue
+    if package_number < 1 or package_number > 40:
+      print("Invalid input. Not between 1-40")
+      continue
+
+    package = package_hash_table.search(package_number)
+
+    if package is None:
+      print("Package not found.")
+    
+    else:
+      time_input = input("Enter a time using 24-hour format (ie 13:52) or 'q' to return to home page: ")
+      if time_input.lower() == 'q':
+        break
+      try:
+        time = datetime.strptime(time_input, "%H:%M")
+      except ValueError:
+        print("Wrong time format")
+        continue
+
+      print(f"{'Package':<10}{'Status':<25}{'Truck':<10}")
+      assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
+      if time < package.delivery_time:
+        if assigned_truck is None or time < assigned_truck.departure_time:
+              package_status = "At the hub"
+              truck_status = "None"
+        else: 
+          package_status = "In route"
+          truck_status = assigned_truck.truck_id
+      else:
+        delivery_time = package.delivery_time.strftime("%H:%M")
+        package_status = f"Delivered at {delivery_time}"
+        truck_status = assigned_truck.truck_id
+
+      print(f"{package.obj_id:<10}{package_status:<25}{str(truck_status):<10}")
+
+def view_truck_mileage(trucks):
+  total_distance = 0
+  for truck in trucks:
+    total_distance = total_distance + truck.distance_traveled
+    print(f"{truck.truck_id}: {truck.distance_traveled:.1f}")
+  print(f"Total mileage: {total_distance:.1f}")
 
 
 if __name__ == "__main__":
