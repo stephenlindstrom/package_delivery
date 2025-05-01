@@ -14,9 +14,10 @@ class Package:
     self.group_id = group_id
     self.ready_time = datetime.strptime(ready_time, "%H:%M") if ready_time else None
     self.delivery_time = None
+    self.truck_assignment = None
 
   def __str__(self):
     deadline_str = self.deadline.strftime("%H:%M") if self.deadline else "EOD"
     ready_time_str = self.ready_time.strftime("%H:%M") if self.ready_time else None
     delivery_time_str = self.delivery_time.strftime("%H:%M") if self.delivery_time else None
-    return f"{self.obj_id}, {self.address}, {deadline_str}, {self.city}, {self.zip_code}, {self.weight}, {self.delivery_status}, {self.truck_requirement}, {self.group_id}, {ready_time_str}, {delivery_time_str}"
+    return f"{self.obj_id}, {self.address}, {deadline_str}, {self.city}, {self.zip_code}, {self.weight}, {self.delivery_status}, {self.truck_requirement}, {self.group_id}, {ready_time_str}, {delivery_time_str}, {self.truck_assignment}"
