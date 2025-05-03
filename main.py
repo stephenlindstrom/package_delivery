@@ -1,3 +1,7 @@
+"""
+Stephen Lindstrom
+ID 012464573
+"""
 import data_loader
 
 from datetime import datetime, timedelta
