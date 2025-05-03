@@ -181,7 +181,7 @@ def view_all_packages(package_hash_table, trucks):
     if user_input.lower() == 'q':
       break
     try:
-      time = datetime.strptime(user_input, "%H:%M")
+      query_time = datetime.strptime(user_input, "%H:%M")
     except ValueError:
       print("Wrong time format")
       continue
@@ -194,11 +194,11 @@ def view_all_packages(package_hash_table, trucks):
       key=lambda package: package.obj_id
     )
 
-    print(f"{'Package':<10}{'Status':<25}{'Truck':<10}")
+    print(f"{'Package':<10}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
     for package in packages:
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
-      if time < package.delivery_time:
-        if assigned_truck is None or time < assigned_truck.departure_time:
+      if query_time < package.delivery_time:
+        if assigned_truck is None or query_time < assigned_truck.departure_time:
               package_status = "At the hub"
               truck_status = "None"
         else: 
@@ -208,8 +208,16 @@ def view_all_packages(package_hash_table, trucks):
         delivery_time = package.delivery_time.strftime("%H:%M")
         package_status = f"Delivered at {delivery_time}"
         truck_status = assigned_truck.truck_id
+        if package.deadline and package.delivery_time > package.deadline:
+          package_status += " Late"
+        else: 
+          package_status += " On time"
 
-      print(f"{package.obj_id:<10}{package_status:<25}{str(truck_status):<10}")
+      if package.deadline:
+        deadline = package.deadline.strftime("%H:%M")
+      else:
+        deadline = "EOD"
+      print(f"{package.obj_id:<10}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 
 def view_package(package_hash_table, trucks):
@@ -237,15 +245,15 @@ def view_package(package_hash_table, trucks):
       if time_input.lower() == 'q':
         break
       try:
-        time = datetime.strptime(time_input, "%H:%M")
+        query_time = datetime.strptime(time_input, "%H:%M")
       except ValueError:
         print("Wrong time format")
         continue
 
-      print(f"{'Package':<10}{'Status':<25}{'Truck':<10}")
+      print(f"{'Package':<10}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
-      if time < package.delivery_time:
-        if assigned_truck is None or time < assigned_truck.departure_time:
+      if query_time < package.delivery_time:
+        if assigned_truck is None or query_time < assigned_truck.departure_time:
               package_status = "At the hub"
               truck_status = "None"
         else: 
@@ -255,8 +263,16 @@ def view_package(package_hash_table, trucks):
         delivery_time = package.delivery_time.strftime("%H:%M")
         package_status = f"Delivered at {delivery_time}"
         truck_status = assigned_truck.truck_id
+        if package.deadline and package.delivery_time > package.deadline:
+          package_status += " Late"
+        else: 
+          package_status += " On time"
 
-      print(f"{package.obj_id:<10}{package_status:<25}{str(truck_status):<10}")
+      if package.deadline:
+        deadline = package.deadline.strftime("%H:%M")
+      else:
+        deadline = "EOD"
+      print(f"{package.obj_id:<10}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 def view_truck_mileage(trucks):
   total_distance = 0
