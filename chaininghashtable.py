@@ -1,9 +1,10 @@
 class ChainingHashTable:
   # Constructor with optional initial capacity parameter
-  # Creates a list of empty buckets
+  # Creates a list of empty buckets (quantity based on given capacity with 10 as default)
   def __init__(self, initial_capacity=10):
     self.table = []
     for i in range(initial_capacity):
+      # Each bucket is a list that allows for chaining multiple items if there are collisions
       self.table.append([])
 
   # Returns string representation of the hash table
@@ -56,8 +57,9 @@ class ChainingHashTable:
         return True
     return False
   
-  # Helper method to get the bucket list for a given key
+  # Returns the bucket list for a given key
   def _get_bucket_list(self, key):
+    # Use hash value of given key to find index in hash table
     bucket = hash(key) % len(self.table)
     return self.table[bucket]
 
