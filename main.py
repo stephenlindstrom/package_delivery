@@ -249,7 +249,7 @@ def view_all_packages(package_hash_table, trucks):
     )
 
     # Prints column headers with formatting
-    print(f"{'Package':<10}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
+    print(f"{'Package':<10}{'Address':<45}{'City':<25}{'Zip Code':<10}{'Weight (kg)':<15}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
     for package in packages:
       # Finds the truck that the package is assigned to, if any
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
@@ -280,7 +280,7 @@ def view_all_packages(package_hash_table, trucks):
         deadline = "EOD"
 
       # Prints package info in respective columns
-      print(f"{package.obj_id:<10}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
+      print(f"{package.obj_id:<10}{package.address:<45}{package.city:<25}{package.zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 
 def view_package(package_hash_table, trucks):
@@ -325,7 +325,7 @@ def view_package(package_hash_table, trucks):
         continue
       
       # Prints column headers for display
-      print(f"{'Package':<10}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
+      print(f"{'Package':<10}{'Address':<45}{'City':<25}{'Zip Code':<10}{'Weight (kg)':<15}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
 
       # Finds the truck that the package is assigned to, if any
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
@@ -354,7 +354,7 @@ def view_package(package_hash_table, trucks):
         deadline = "EOD"
 
       # Prints formatted output for selected package
-      print(f"{package.obj_id:<10}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
+      print(f"{package.obj_id:<10}{package.address:<45}{package.city:<25}{package.zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 def view_truck_mileage(trucks):
   """

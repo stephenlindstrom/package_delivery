@@ -27,4 +27,9 @@ class Package:
     deadline_str = self.deadline.strftime("%H:%M") if self.deadline else "EOD"
     ready_time_str = self.ready_time.strftime("%H:%M") if self.ready_time else "N/A"
     delivery_time_str = self.delivery_time.strftime("%H:%M") if self.delivery_time else "N/A"
-    return f"{self.obj_id}, {self.address}, {deadline_str}, {self.city}, {self.zip_code}, {self.weight}, {self.delivery_status}, {self.truck_requirement}, {self.group_id}, {ready_time_str}, {delivery_time_str}, {self.truck_assignment}"
+    return (
+      f"{self.obj_id}, {self.address}, {deadline_str}, "
+      f"{self.city}, {self.zip_code}, {self.weight}, {self.delivery_status}, "
+      f"{self.truck_requirement}, {self.group_id}, {ready_time_str}, "
+      f"{delivery_time_str}, {self.truck_assignment}"
+    )
