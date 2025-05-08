@@ -380,12 +380,18 @@ def view_package(package_hash_table, trucks):
 
 def view_truck_mileage(trucks):
   """
-  Prints mileage for each truck as well as combined mileage
+  Prints mileage, departure time, and return time for each truck as well as combined mileage
   """
   total_distance = 0
+  print(f"{'Truck':<10}{'Mileage':<10}{'Departure Time':<17}{'Return Time':<15}")
   for truck in trucks:
+    departure_time = truck.departure_time.strftime("%H:%M")
+    if truck.return_time:
+      return_time = truck.return_time.strftime("%H:%M")
+    else:
+      return_time = "None"
     total_distance = total_distance + truck.distance_traveled
-    print(f"Truck {truck.truck_id}: {truck.distance_traveled:.1f} miles")
+    print(f"{truck.truck_id:<10}{truck.distance_traveled:<10.1f}{departure_time:<17}{return_time:<15}")
   print(f"Total mileage: {total_distance:.1f} miles")
 
 
