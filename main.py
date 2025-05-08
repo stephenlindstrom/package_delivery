@@ -32,6 +32,11 @@ def main():
   truck3_departure_time = max(driver_ready_time, package9_ready_time).strftime("%H:%M")
   truck3 = Truck(3, truck3_departure_time)
 
+  # Correct address of package 9 as truck 3 will not leave until 10:20am at the earliest
+  package9 = package_hash_table.search(9)
+  package9.address = "410 S State St"
+  package9.zip_code = "84111"
+
   # Load and deliver packages in truck 3
   load_truck(truck3, package_hash_table, distance_matrix, address_list)
   deliver_packages(truck3, distance_matrix, address_list)
@@ -251,11 +256,19 @@ def view_all_packages(package_hash_table, trucks):
     # Prints column headers with formatting
     print(f"{'Package':<10}{'Address':<45}{'City':<25}{'Zip Code':<10}{'Weight (kg)':<15}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
     for package in packages:
+      address = package.address
+      zip_code = package.zip_code
+      # Display incorrect address for package 9 prior to 10:20am
+      if package.obj_id == 9:
+        if query_time < package.ready_time:
+          address = "300 State St" 
+          zip_code = "84103"
+
       # Finds the truck that the package is assigned to, if any
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
 
       # If package has not yet been delivered
-      if query_time < package.delivery_time:
+      if not package.delivery_time or query_time < package.delivery_time:
         # If package isn't assigned to a truck or truck has not left yet
         if assigned_truck is None or query_time < assigned_truck.departure_time:
               package_status = "At the hub"
@@ -280,7 +293,7 @@ def view_all_packages(package_hash_table, trucks):
         deadline = "EOD"
 
       # Prints package info in respective columns
-      print(f"{package.obj_id:<10}{package.address:<45}{package.city:<25}{package.zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
+      print(f"{package.obj_id:<10}{address:<45}{package.city:<25}{zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 
 def view_package(package_hash_table, trucks):
@@ -327,6 +340,15 @@ def view_package(package_hash_table, trucks):
       # Prints column headers for display
       print(f"{'Package':<10}{'Address':<45}{'City':<25}{'Zip Code':<10}{'Weight (kg)':<15}{'Status':<35}{'Deadline':<10}{'Truck':<10}")
 
+      address = package.address
+      zip_code = package.zip_code
+
+      # Display incorrect address for package 9 prior to 10:20am
+      if package.obj_id == 9:
+        if query_time < package.ready_time:
+          address = "300 State St" 
+          zip_code = "84103"
+
       # Finds the truck that the package is assigned to, if any
       assigned_truck = next((t for t in trucks if t.truck_id == package.truck_assignment), None)
 
@@ -354,7 +376,7 @@ def view_package(package_hash_table, trucks):
         deadline = "EOD"
 
       # Prints formatted output for selected package
-      print(f"{package.obj_id:<10}{package.address:<45}{package.city:<25}{package.zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
+      print(f"{package.obj_id:<10}{address:<45}{package.city:<25}{zip_code:<10}{package.weight:<15}{package_status:<35}{deadline:<10}{str(truck_status):<10}")
 
 def view_truck_mileage(trucks):
   """
